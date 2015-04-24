@@ -62,11 +62,11 @@ esac
 
 AC_CACHE_SAVE
 
-## TODO:2003 Add the dependencies of your project here.
-## TODO:2003 The use of "argtable2" here is not mandatory. You don't have
-## TODO:2003 to keep it.
+AC_CHECK_LIB([pthread], [pthread_mutex_init])
 
-PKG_CHECK_MODULES([ARGTABLE], [argtable2 >= 9])
+AC_CHECK_HEADERS([ linux/input.h ])
+AC_CHECK_HEADERS([ linux/uinput.h ])
+AC_CHECK_HEADERS([ linux/i2c-dev.h ])
 
 AC_CACHE_SAVE
 
