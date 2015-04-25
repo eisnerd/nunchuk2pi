@@ -24,7 +24,7 @@ static pthread_t nunchuk_thread;
 		return -2;             \
 	}	
 
-static int nunchuk_calculate_request_period()
+static void nunchuk_calculate_request_period()
 {
 	nunchuk_request_period = (int)((1000.0f * 1000)/(float)nunchuk_request_freq);
 }
@@ -46,7 +46,7 @@ static void nunchuk_try_callback(int read_succes)
 	}	
 }
 
-static int nunchuk_parse_data(struct nunchuk* n)
+static void nunchuk_parse_data(struct nunchuk* n)
 {
 	n->X = nunchuk_data_buffer[0];
 	n->Y = nunchuk_data_buffer[1];
@@ -123,7 +123,7 @@ int nunchuk_init(struct nunchuk* n)
 	nunchuk_ioctl_data.msgs->addr = NUNCHUK_ADDRESS;
 	nunchuk_ioctl_data.msgs->flags = I2C_M_RD;
 	nunchuk_ioctl_data.msgs->len = NUNCHUK_DATA_LENGTH;
-	nunchuk_ioctl_data.msgs->buf = nunchuk_data_buffer;
+	nunchuk_ioctl_data.msgs->buf = (char*)nunchuk_data_buffer;
 
 	memset(nunchuk_data_buffer, 0, sizeof(uint8_t) * NUNCHUK_DATA_LENGTH);
 	

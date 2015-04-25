@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #define NUNCHUK_ADDRESS      0x52
 #define NUNCHUK_DATA_LENGTH  6
