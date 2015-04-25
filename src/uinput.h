@@ -26,7 +26,7 @@ int send_abs_mouse(int32_t x, int32_t y);
 #define autorepeat 2
 
 #define send_key_macro(x) \
-    inline int send_key_##x(uint16_t key) {  \
+    static inline int send_key_##x(uint16_t key) {  \
         return send_event(EV_KEY, key, x);   \
     }
     

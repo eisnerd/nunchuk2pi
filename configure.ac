@@ -40,7 +40,6 @@ AX_CFLAGS_GCC_OPTION([-Wformat-security])
 AX_CFLAGS_GCC_OPTION([-Wfatal-errors])
 AX_CFLAGS_GCC_OPTION([-Wcast-align])
 AX_CFLAGS_GCC_OPTION([-Winline])
-AX_CFLAGS_GCC_OPTION([-fstack-protector])
 AX_CFLAGS_GCC_OPTION([-D_FORTIFY_SOURCE=2])
 AX_CFLAGS_GCC_OPTION([-Wno-unused-parameter])
 AX_CFLAGS_GCC_OPTION([-Wno-missing-field-initializers])
@@ -67,6 +66,8 @@ AC_CHECK_LIB([pthread], [pthread_mutex_init])
 AC_CHECK_HEADERS([ linux/input.h ])
 AC_CHECK_HEADERS([ linux/uinput.h ])
 AC_CHECK_HEADERS([ linux/i2c-dev.h ])
+
+PKG_CHECK_MODULES([LIRC], [lirc >= 0.9.2])
 
 AC_CACHE_SAVE
 
