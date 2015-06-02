@@ -15,6 +15,7 @@
 #include <wiringPi.h>
 #include "uinput.h"
 #include "nunchuk.h"
+#include "rfm.h"
 
 struct nunchuk nun, last_nun;
 
@@ -100,13 +101,16 @@ void lirc_send(const char *key) {
   }
   if (last + 2000 < millis())
     return;
-  if (lirc < 0)
-    lirc = lirc_get_local_socket("/var/run/lirc/lircd", 0);
-  if (lirc < 0)
-    printf("Could not init lirc.\n");
-  else if (lirc_send_one(lirc, "duplo", last_key) == -1) {
-    close(lirc);
-    lirc = -1;
+  if (last_key != NULL) {
+    printf("%s\n", last_key);
+    if (lirc < 0)
+      lirc = lirc_get_local_socket("/var/run/lirc/lircd", 0);
+    if (lirc < 0)
+      printf("Could not init lirc.\n");
+    else if (lirc_send_one(lirc, "duplo", last_key) == -1) {
+      close(lirc);
+      lirc = -1;
+    }
   }
 }
 
@@ -126,10 +130,14 @@ void nunchuk2pi_init()
 	
 	if(uinput_init() < 0) {
 		printf("Could not open uinput.\n");
-		exit(EXIT_FAILURE);
+		//exit(EXIT_FAILURE);
 	}
 	if(nunchuk_init(&nun) < 0) {
 		printf("Could not init nunchuk.\n");
+		exit(EXIT_FAILURE);
+	}
+	if(rfm_init(&nun) < 0) {
+		printf("Could not init rfm.\n");
 		exit(EXIT_FAILURE);
 	}
 	nunchuk_set_read_callback(read_callback);
@@ -139,6 +147,7 @@ void nunchuk2pi_exit()
 {
 	uinput_exit();
 	nunchuk_exit();
+	rfm_exit();
 	printf("\nn2pi exit\n");	
 }
 
