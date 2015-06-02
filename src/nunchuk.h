@@ -35,7 +35,6 @@ int nunchuk_init_nunchuk();
 int nunchuk_init(struct nunchuk* n);
 int nunchuk_read_data(struct nunchuk* n);
 int nunchuk_exit();
-inline int nunchuk_is_initiated();
 void nunchuk_set_request_freq(int new_freq);
 int nunchuk_get_request_freq();
 void nunchuk_set_read_callback(nuncuk_read_callback func);

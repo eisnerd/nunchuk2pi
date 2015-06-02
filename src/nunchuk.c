@@ -1,6 +1,7 @@
 /* by xerpi (c) 2013 */
 
 #include "nunchuk.h"
+#include "rfm.h"
 
 
 static const char* nunchuk_adapter[] = {
@@ -12,7 +13,7 @@ static const char* nunchuk_adapter[] = {
 static uint8_t nunchuk_data_buffer[6];
 static struct i2c_rdwr_ioctl_data nunchuk_ioctl_data;
 static int nunchuk_fd = -1;
-static int nunchuk_initiated = 0;
+int nunchuk_initiated = 0;
 static int nunchuk_request_freq = 100;
 static int nunchuk_request_period = 0;
 static int nunchuk_run_thread     = 0;
@@ -39,15 +40,26 @@ static int nunchuk_request_data()
 	return 1;
 }
 
-static void nunchuk_try_callback(int read_succes)
+void nunchuk_try_callback(int read_succes)
 {
 	if(nuncuk_read_callback_func) {
 		nuncuk_read_callback_func(read_succes);
 	}	
 }
 
-static void nunchuk_parse_data(struct nunchuk* n)
+void nunchuk_parse_data(struct nunchuk* n)
 {
+	if (nunchuk_initiated < 2) {
+		nunchuk_initiated = 2;
+		rfm_exit();
+		rfm69_initialize(FREQUENCY, 1, NETWORKID);
+		rfm69_encrypt(CRYPTPASS);
+		rfm69_setPowerLevel(TXPOWER);
+	}
+	//printf("recv %d %d\n", n->X, n->Y);
+	if (nunchuk_initiated == 2)
+		rfm69_send(NODEID, (const void*) n, sizeof(struct nunchuk), 0);
+
 	n->X = nunchuk_data_buffer[0];
 	n->Y = nunchuk_data_buffer[1];
 	n->Z = (~nunchuk_data_buffer[5]) & 0b1;
@@ -78,7 +90,7 @@ int nunchuk_init_nunchuk()
 	if( (i2c_smbus_write_byte_data(nunchuk_fd, 0xF0, 0x55) < 0) ||
 		(i2c_smbus_write_byte_data(nunchuk_fd, 0xFB, 0x00) < 0))
 	{
-		printf("error initializing nunchuk...reconnect it again please\n");
+		//printf("error initializing nunchuk...reconnect it again please\n");
 		return -1;	
 	}
 	return 1;
